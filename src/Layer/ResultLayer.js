@@ -23,8 +23,8 @@ var ResultLayer = cc.Layer.extend({
                 this.changeLoadingImage();
             }
 
-            //bgm
-            playSystemBGM();
+//bgm
+//playSystemBGM();
             //back
             var back = cc.Sprite.create(loading_png);
             back.setAnchorPoint(0,0);

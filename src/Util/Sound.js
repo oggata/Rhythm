@@ -24,7 +24,7 @@ var playSystemBGM = function(){
 
 var playSE = function(sound){
     this.audioEngine = cc.AudioEngine.getInstance();
-    this.audioEngine.playEffect(s_bike,false);
+    this.audioEngine.playEffect(s_se_good,false);
     this.audioEngine.setEffectsVolume(CONFIG.SE_VOLUME);
 };
 

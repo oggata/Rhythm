@@ -109,7 +109,7 @@ var GameLayer = cc.Layer.extend({
         }
 
         this.tapCnt++;
-        if(this.tapCnt>=20){
+        if(this.tapCnt>=32){
             this.tapCnt = 0;
             var depX = getRandNumberFromRange(50,300);
             var depY = 500;
@@ -137,6 +137,7 @@ var GameLayer = cc.Layer.extend({
             if( this.touched.x -20 <= x && x <= this.touched.x + 20 &&
                 this.touched.y -20 <= y && y <= this.touched.y + 20){
                 this.taps[i].tap();
+playSE();
             }
         }
     },

@@ -17,8 +17,8 @@ var GameOverLayer = cc.Layer.extend({
                 this.changeLoadingImage();
             }
 
-            //bgm
-            playSystemBGM();
+//bgm
+//playSystemBGM();
             this.storage = storage;
             
             //背景

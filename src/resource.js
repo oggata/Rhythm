@@ -50,8 +50,10 @@ var effect_water         = base_dir + "effect/pipo-btleffect038.png";
 var s_initSprite         = base_dir + "sprite/initSprite.png";
 
 //bgm
-var s_bgm_001            = base_dir + "res/sound/bgm/bgm_maoudamashii_cyber08.mp3";
-var s_bgm_002            = base_dir + "res/sound/bgm/bgm_maoudamashii_cyber08.mp3";
+var s_bgm_001            = base_dir + "res/sound/bgm/bgm_maoudamashii_cyber10.mp3";
+var s_bgm_002            = base_dir + "res/sound/bgm/bgm_maoudamashii_cyber10.mp3";
+var s_se_good            = base_dir + "res/sound/se/se_maoudamashii_onepoint12.mp3";
+
 var s_se_dog             = base_dir + "res/sound/se/se_maoudamashii_magical01.mp3";
 var s_se_occupied        = base_dir + "res/sound/se/se_maoudamashii_onepoint17.mp3";
 var s_se_enemyOccupied   = base_dir + "res/sound/se/se_maoudamashii_onepoint29.mp3";
@@ -87,5 +89,6 @@ var g_resources       = [
     s_bgm_001,
     s_tap_good,
     s_tap_normal,
-    s_tap_bad
+    s_tap_bad,
+    s_se_good
 ];

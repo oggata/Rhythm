@@ -39,8 +39,8 @@ var SysMenu = cc.Layer.extend({
             }
         }
 
-        //bgm
-        playSystemBGM();
+//bgm
+//playSystemBGM();
 
         //back
         var sp = cc.Sprite.create(loading_png);
