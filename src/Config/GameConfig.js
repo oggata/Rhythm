@@ -1,0 +1,7 @@
+var CONFIG = CONFIG || {};
+
+CONFIG.DEBUG_FLAG       = 1;
+CONFIG.DEBUG_STAGE_NUM  = 0;
+CONFIG.BGM_VOLUME       = 1;
+CONFIG.SE_VOLUME        = 1;
+
