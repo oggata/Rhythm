@@ -38,7 +38,7 @@ var GameLayer = cc.Layer.extend({
         this.addChild(this.back);
 
         this.score = cc.LabelTTF.create("00","Arial",20);
-        this.score.setPosition(30,450);
+        this.score.setPosition(40,450);
         this.addChild(this.score);
 
         this.combo = cc.LabelTTF.create("00","Arial",40);
@@ -54,8 +54,8 @@ var GameLayer = cc.Layer.extend({
         this.addChild(this.cutIn,999);
         this.cutIn.set_text("START");
 
-        this.chara002 = new DisplayPlayer(chara002,10,160);
-        this.addChild(this.chara002);
+        this.enemy = new DisplayPlayer(chara002,10,160);
+        this.addChild(this.enemy);
 
         this.scheduleUpdate();
         this.setTouchEnabled(true);
@@ -70,7 +70,7 @@ var GameLayer = cc.Layer.extend({
         //ゲーム時間を進める
         this.gameCnt++;
 
-        this.chara002.update();
+        this.enemy.update();
         this.cutIn.update();
 
         //タップする駒を生成
@@ -97,16 +97,20 @@ var GameLayer = cc.Layer.extend({
         }
 
         //１曲終わったら終了
-        if(this.gameCnt + this.tapBeginCnt * 30 == 98 * 30){
+        if(this.gameCnt + this.tapBeginCnt * 30 == CONFIG.STAGE_001_MUSIC_TIME - 30 * 5){
             this.cutIn.set_text("FINISHED...");
         }
-        if(this.gameCnt + this.tapBeginCnt * 30 == 103 * 30){
+        if(this.gameCnt + this.tapBeginCnt * 30 == CONFIG.STAGE_001_MUSIC_TIME){
             this.goResultLayer();
         }
 
         //スコアの計測
         this.storage.successRate = Math.floor((this.storage.good + this.storage.normal)/(this.storage.good + this.storage.normal + this.storage.bad + this.storage.miss)* 100);
-        this.score.setString(this.storage.successRate + "%");
+        if(this.storage.good + this.storage.normal == 0){
+            this.score.setString("");
+        }else{
+            this.score.setString(this.storage.successRate.toFixed(2) + "%");
+        }
 
         if(this.comboCnt >= 1){
             this.combo.setVisible(true);
@@ -228,6 +232,7 @@ var GameLayer = cc.Layer.extend({
 //シーンの切り替え----->
 
     goResultLayer:function (pSender) {
+        stopBGM();
         //ステージを追加
         this.storage.stageNumber++;
         if(this.storage.maxStageNumber <= this.storage.stageNumber){
@@ -258,6 +263,7 @@ var GameLayer = cc.Layer.extend({
     },
 
     goGameOverLayer:function (pSender) {
+        stopBGM();
         //this.storage.calcTotal();
         //this.saveData();
         var scene = cc.Scene.create();

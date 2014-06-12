@@ -14,7 +14,7 @@ var Tap = cc.Node.extend({
         this.storage           = this.game.storage;
         this.scale             = 1;
         this.alpha             = 1;
-        this.rotate            = 1;
+        this.rotate            = getRandNumberFromRange(0,360);
         this.touchX            = touchX;
         this.touchY            = touchY;
         this.isTapped          = false;
@@ -29,7 +29,11 @@ var Tap = cc.Node.extend({
     },
 
     update:function() {
-        this.rotate+=30;
+        if(this.status == "none"){
+            this.rotate+=30;
+        }else{
+            this.rotate+=5;
+        }
         this.marker.setRotation(this.rotate);
         //駒を動かす制御
         if(this.depX < this.touchX){
@@ -56,6 +60,7 @@ var Tap = cc.Node.extend({
                         this.game.storage.miss++;
                     }
                     this.status = "miss";
+                    this.star.setVisible(false);
                     this.game.comboCnt = 0;
                     this.bad.setVisible(true);
                     this.alpha -= 0.05;
@@ -107,7 +112,7 @@ var Tap = cc.Node.extend({
         if(this.randingCnt <= 4){
             this.status = "normal";
         }
-        if(this.randingCnt <= 2){
+        if(this.randingCnt <= 1){
             this.status = "good";
         }
 
@@ -120,16 +125,19 @@ var Tap = cc.Node.extend({
             this.bad.setVisible(true);
             this.game.comboCnt = 0;
             this.game.storage.bad++;
+            this.star.setVisible(false);
         }
         if(status == "normal"){
             this.normal.setVisible(true);
             this.game.comboCnt = 0;
             this.game.storage.normal++;
+            this.star.setVisible(false);
         }
         if(status == "good"){
             this.good.setVisible(true);
             this.game.comboCnt++;
             this.game.storage.good++;
+            this.star.setVisible(false);
         }
     },
 

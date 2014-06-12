@@ -51,7 +51,7 @@ var SysMenu = cc.Layer.extend({
         this.newGameButton = new ButtonItem("NEW GAME",200,40,this.onNewGame,this);
         this.newGameButton.setPosition(160,60);
         this.addChild(this.newGameButton);
-
+/*
         //load game
         var loadGameTitle = "LOAD GAME (cleared)";
         if(this.storage.maxStageNumber < CONFIG.MAX_STAGE_NUMBER){
@@ -64,7 +64,7 @@ var SysMenu = cc.Layer.extend({
             //保存データがない人はロードボタンを表示させない
             this.loadGameButton.set_visible(false);
         }
-
+*/
         // debug
         this.label = cc.LabelTTF.create("DEBUG", "Arial", 18);
         this.debugModeButton = cc.MenuItemLabel.create(this.label,this.onDebugMode,this);

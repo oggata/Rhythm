@@ -14,6 +14,11 @@ var playBGM = function(){
     this.audioEngine.setMusicVolume(CONFIG.BGM_VOLUME);
 };
 
+var stopBGM = function(){
+    this.audioEngine = cc.AudioEngine.getInstance();
+    this.audioEngine.stopMusic();
+}
+
 var playSystemBGM = function(){
     this.audioEngine = cc.AudioEngine.getInstance();
     this.audioEngine.stopMusic();

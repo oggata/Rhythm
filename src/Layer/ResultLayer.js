@@ -29,15 +29,33 @@ var ResultLayer = cc.Layer.extend({
             var back = cc.Sprite.create(loading_png);
             back.setAnchorPoint(0,0);
             this.addChild(back, 0, 1);
-
+/*
             //back
             var sp = cc.Sprite.create(s_result_clear);
             sp.setAnchorPoint(0,0);
             this.addChild(sp, 0, 1);
+*/
+
+            this.rank = "F";
+            if(this.storage.successRate >= 10){
+                this.rank = "F";
+            }
+            if(this.storage.successRate >= 30){
+                this.rank = "C";
+            }
+            if(this.storage.successRate >= 50){
+                this.rank = "B";
+            }
+            if(this.storage.successRate >= 70){
+                this.rank = "A";
+            }
+            if(this.storage.successRate >= 90){
+                this.rank = "S";
+            }
 
             //スコア
             this.scoreText = cc.LabelTTF.create(
-                "A Rank",
+                "Rank:" + this.rank + "",
                 "Arial",
                 50
             );
@@ -47,10 +65,8 @@ var ResultLayer = cc.Layer.extend({
 
             //結果
             this.resultText = cc.LabelTTF.create(
-                  "GOOD  ×" + getZeroPaddingNumber(this.storage.good,4) + "\n"
-                + "NORMAL×" + getZeroPaddingNumber(this.storage.normal,4) + "\n"
-                + "BAD   ×" + getZeroPaddingNumber(this.storage.bad,4) + "\n"
-                + "MISS  ×" + getZeroPaddingNumber(this.storage.miss,4) + "\n"
+                  "RATE  ×" + this.storage.successRate.toFixed(2) + "%" + "\n"
+                + "MAX [" + getZeroPaddingNumber(this.storage.maxCombo,3) + "]COMBO" + "\n"
             ,"Arial",15);
             this.resultText.setAnchorPoint(0,0);       
             this.resultText.setPosition(50,150);

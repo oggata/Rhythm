@@ -41,17 +41,17 @@ var loadData = function(){
 };
 
 var goTwitter = function(score){
-	var res = "http://twitter.com/share?url=http://oggata.github.io/Territory/&text=ステージクリア!!";
+	var res = "http://twitter.com/share?url=http://oggata.github.io/Rhythm/&text=ステージクリア!!";
 	window.open(res,'_blank');
 };
 
 var goTwitterClear = function(score){
-	var res = "http://twitter.com/share?url=http://oggata.github.io/Territory/&text=全ステージ制覇しました!!!";
+	var res = "http://twitter.com/share?url=http://oggata.github.io/Rhythm/&text=全ステージ制覇しました!!!";
 	window.open(res,'_blank');
 };
 
 var goFacebook = function(score){
-	var url = encodeURIComponent('http://oggata.github.io/Territory/');
+	var url = encodeURIComponent('http://oggata.github.io/Rhythm/');
 	var res = "https://www.facebook.com/sharer/sharer.php?u=" + url;
 	window.open(res,'_blank')
 };
