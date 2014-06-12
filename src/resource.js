@@ -10,7 +10,7 @@ var base_dir = "./";
 
 
 var chara001     = "sprite/st-cthylla1.png";
-var chara002     = "sprite/carstairs-beast.png";
+var chara002     = "sprite/ticktackman2013.png";
 var s_back       = "ui/back.png";
 
 var s_tap        = "ui/tap.png";

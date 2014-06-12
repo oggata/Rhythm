@@ -16,6 +16,7 @@ var DisplayPlayer = cc.Node.extend({
         this.energy = 0;
         this.maxEnergy = 100;
 
+        this.dx = 1;
         this.posX = w;
         this.posY = h;
         this.posY2 = h;
@@ -28,37 +29,14 @@ var DisplayPlayer = cc.Node.extend({
         this.chara001.setScale(0.6);
         this.addChild(this.chara001);
         this.chara001.setPosition(0,0);
-
-        this.hpGauge = new Gauge(140,10,'blue');
-        this.hpGauge.setAnchorPoint(0,0);
-        this.hpGauge.setPosition(0,170);
-        this.addChild(this.hpGauge);
-
-        this.attackGauge = new Gauge(140,10,'red');
-        this.attackGauge.setAnchorPoint(0,0);
-        this.attackGauge.setPosition(0,150);
-        this.addChild(this.attackGauge);
     },
 
     update:function(){
-
-        this.hpGauge.update(this.hp/this.maxHp);
-        this.attackGauge.update(this.energy/this.maxEnergy);
-
-        if(this.isDamaged == true){
-            this.damageCnt++;
-            if(this.damageCnt>=30){
-                this.damageCnt = 0;
-                this.isDamaged = false;
-            }
-            this.posY2+=5;
-            if(this.posY2 >= this.posY + 20){
-                this.posY2 = this.posY;
-            }
-            this.setPosition(this.posX,this.posY2);
-        }else{
-            this.setPosition(this.posX,this.posY);
+        this.posY2 += this.dx;
+        if(this.posY2 >= this.posY + 40 || this.posY2 <= this.posY - 40){
+            this.dx = this.dx * -1;
         }
+        this.setPosition(this.posX,this.posY2);
     },
 
     damage:function(num){

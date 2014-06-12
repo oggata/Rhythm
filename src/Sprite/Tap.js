@@ -1,5 +1,5 @@
 //
-//  Player.js
+//  Tap.js
 //  Territory
 //
 //  Created by Fumitoshi Ogata on 5/30/14.
@@ -12,53 +12,15 @@ var Tap = cc.Node.extend({
         this._super();
         this.game              = game;
         this.storage           = this.game.storage;
-        this.dx                = 0;
-        this.dy                = 0;
         this.scale             = 1;
         this.alpha             = 1;
+        this.rotate            = 1;
         this.touchX            = touchX;
         this.touchY            = touchY;
-
-
-this.depDis = depDis;
-if(this.depDis == "left"){
-    this.depX = touchX - 300;
-    this.depY = touchY;
-}
-if(this.depDis == "right"){
-    this.depX = touchX + 300;
-    this.depY = touchY;
-}
-if(this.depDis == "top"){
-    this.depX = touchX;
-    this.depY = touchY + 300;
-}
-if(this.depDis == "bottom"){
-    this.depX = touchX;
-    this.depY = touchY - 300;
-}
-if(this.depDis == "topleft"){
-    this.depX = touchX - 300;
-    this.depY = touchY + 300;
-}
-if(this.depDis == "topright"){
-    this.depX = touchX + 300;
-    this.depY = touchY + 300;
-}
-if(this.depDis == "bottomleft"){
-    this.depX = touchX - 300;
-    this.depY = touchY - 300;
-}
-if(this.depDis == "bottomright"){
-    this.depX = touchX + 300;
-    this.depY = touchY - 300;
-}
-
-
         this.isTapped          = false;
-        this.markerPosX        = this.depX - this.touchX;
-        this.markerPosY        = this.depY - this.touchY;
+        this.speed             = 10;
         this.randingCnt        = 0;
+        this.setMarkerDep(depDis);
         this.initializeAnimation();
         this.status = "none";
     },
@@ -67,7 +29,9 @@ if(this.depDis == "bottomright"){
     },
 
     update:function() {
-        this.speed = 10;
+        this.rotate+=30;
+        this.marker.setRotation(this.rotate);
+        //駒を動かす制御
         if(this.depX < this.touchX){
             this.depX += this.speed;
         }
@@ -80,23 +44,22 @@ if(this.depDis == "bottomright"){
         if(this.depY > this.touchY){
             this.depY -= this.speed;
         }
-        this.sprite.setPosition(this.depX,this.depY);
-        this.good.setPosition(this.depX,this.depY);
-        this.normal.setPosition(this.depX,this.depY);
-        this.bad.setPosition(this.depX,this.depY);
+        this.marker.setPosition(this.depX,this.depY);
 
+        //タップする枠に入ったら着地とみなして、randingCntを増やす
         if((this.depX == this.touchX) && (this.depY == this.touchY)){
             this.randingCnt++;
             if(this.status == "none" || this.status == "miss"){
+                //到達してから10フレーム経過したらミス扱い
                 if(this.randingCnt>=10){
+                    if(this.status == "none"){
+                        this.game.storage.miss++;
+                    }
                     this.status = "miss";
+                    this.game.comboCnt = 0;
                     this.bad.setVisible(true);
-                    //return false;
-                }
-                if(this.randingCnt>=10){
                     this.alpha -= 0.05;
-                    this.sprite.setOpacity(255 * this.alpha);
-                    this.target.setOpacity(255 * this.alpha);
+                    this.setMarkerAlpha(this.alpha);
                 }
                 if(this.randingCnt>=20){
                     return false;
@@ -108,33 +71,39 @@ if(this.depDis == "bottomright"){
             }
         }
 
+        //駒がタップされたらscaleを増加する
         if(this.isTapped == true){
             this.scale += 0.15;
-            this.alpha -= 0.02;
+            this.alpha -= 0.05;
             if(this.alpha < 0) this.alpha = 0;
-            this.sprite.setScale(this.scale);
-            this.sprite.setOpacity(255 * this.alpha);
+            this.marker.setScale(this.scale);
+            this.setMarkerAlpha(this.alpha);
         }
+        return true;
+    },
 
+    isCanTap:function(){
+        //既にタップされた、ミスと見なされた、距離が離れすぎている駒はタップできない
+        if(this.isTapped == true) return false;
+        if(this.status == "miss") return false;
+        var distance = getDistance(
+            this.target.getPosition().x,
+            this.target.getPosition().y,
+            this.marker.getPosition().x,
+            this.marker.getPosition().y
+        );
+        if(50 < distance) return false;
         return true;
     },
 
     tap:function(){
-        if(this.isTapped==true) return;
-        if(this.status == "miss") return;
-
-        var distance = getDistance(
-            this.target.getPosition().x,
-            this.target.getPosition().y,
-            this.sprite.getPosition().x,
-            this.sprite.getPosition().y
-        );
-        if(50 < distance) return;
+        if(this.isCanTap() == false) return;
 
         playSE();
         this.isTapped = true;
+        
+        //反射スピードによって評価がかわる
         this.status = "bad";
-
         if(this.randingCnt <= 4){
             this.status = "normal";
         }
@@ -142,21 +111,69 @@ if(this.depDis == "bottomright"){
             this.status = "good";
         }
 
-        if(this.status == "bad"){
+        this.setScore(this.status);
+    },
+
+    setScore:function(status){
+        //駒の評価に応じてスコアを計測する
+        if(status == "bad"){
             this.bad.setVisible(true);
             this.game.comboCnt = 0;
             this.game.storage.bad++;
         }
-        if(this.status == "normal"){
+        if(status == "normal"){
             this.normal.setVisible(true);
             this.game.comboCnt = 0;
             this.game.storage.normal++;
         }
-        if(this.status == "good"){
+        if(status == "good"){
             this.good.setVisible(true);
             this.game.comboCnt++;
             this.game.storage.good++;
         }
+    },
+
+    setMarkerDep:function(depDis){
+        if(depDis == "left"){
+            this.depX = this.touchX - 300;
+            this.depY = this.touchY;
+        }
+        if(depDis == "right"){
+            this.depX = this.touchX + 300;
+            this.depY = this.touchY;
+        }
+        if(depDis == "top"){
+            this.depX = this.touchX;
+            this.depY = this.touchY + 300;
+        }
+        if(depDis == "bottom"){
+            this.depX = this.touchX;
+            this.depY = this.touchY - 300;
+        }
+        if(depDis == "topleft"){
+            this.depX = this.touchX - 300;
+            this.depY = this.touchY + 300;
+        }
+        if(depDis == "topright"){
+            this.depX = this.touchX + 300;
+            this.depY = this.touchY + 300;
+        }
+        if(depDis == "bottomleft"){
+            this.depX = this.touchX - 300;
+            this.depY = this.touchY - 300;
+        }
+        if(depDis == "bottomright"){
+            this.depX = this.touchX + 300;
+            this.depY = this.touchY - 300;
+        }
+    },
+
+    setMarkerAlpha:function(num){
+        this.target.setOpacity(255 * num);
+        this.star.setOpacity(255 * num);
+        this.good.setOpacity(255 * num);
+        this.normal.setOpacity(255 * num);
+        this.bad.setOpacity(255 * num);
     },
 
     initializeAnimation:function(){
@@ -166,28 +183,23 @@ if(this.depDis == "bottomright"){
         this.target.setPosition(this.touchX,this.touchY);
         this.addChild(this.target);
 
-/*
-        this.tap = cc.Node.create();
-        this.tap.setPosition(this.depX,this.depY);
-*/
+        this.marker = cc.Node.create();
+        this.marker.setPosition(this.depX,this.depY);
+        this.addChild(this.marker);
 
-        this.sprite = cc.Sprite.create(s_tap);
-        this.addChild(this.sprite);
-        this.sprite.setPosition(this.depX,this.depY);
+        this.star = cc.Sprite.create(s_tap);
+        this.marker.addChild(this.star);
         
         this.good = cc.Sprite.create(s_tap_good);
-        this.addChild(this.good);
-        this.good.setPosition(this.depX,this.depY);
+        this.marker.addChild(this.good);
         this.good.setVisible(false);
 
         this.normal = cc.Sprite.create(s_tap_normal);
-        this.addChild(this.normal);
-        this.normal.setPosition(this.depX,this.depY);
+        this.marker.addChild(this.normal);
         this.normal.setVisible(false);
 
         this.bad = cc.Sprite.create(s_tap_bad);
-        this.addChild(this.bad);
-        this.bad.setPosition(this.depX,this.depY);
+        this.marker.addChild(this.bad);
         this.bad.setVisible(false);
 
         //デバッグ

@@ -37,7 +37,7 @@ var ResultLayer = cc.Layer.extend({
 
             //スコア
             this.scoreText = cc.LabelTTF.create(
-                getZeroPaddingNumber(this.storage.successRate,4) + "%",
+                "A Rank",
                 "Arial",
                 50
             );
@@ -66,18 +66,18 @@ var ResultLayer = cc.Layer.extend({
             );
             homeButton.setAnchorPoint(0,0);
             homeButton.setPosition(250,410);
-
             //set header
             this.menu = cc.Menu.create(
                 homeButton
             );
             this.addChild(this.menu);
             this.menu.setPosition(0,0);
-
+/*
             //nextボタン
             var nextButton = new ButtonItem("次のステージ",200,50,this.onNextGame,this);
             nextButton.setPosition(160,120);
             this.addChild(nextButton);
+*/
 /*
             //nextボタン
             var changeButton = new ButtonItem("キャラ選択",200,50,this.onCharaSelect,this);

@@ -84,6 +84,8 @@ var SysMenu = cc.Layer.extend({
         this.infoTextPosX = 320;
         this.infoTextPosY = 450;
 
+        rtn = "";
+/*
         rtn = "全6ステージの体験版(ver1.01)です。データはブラウザに保存されます。SCORE---->";
         rtn += '到達したステージ:' + this.storage.maxStageNumber + ' ';
         rtn += '合計スコア × ' + this.storage.totalGameScore + ' ';
@@ -91,7 +93,7 @@ var SysMenu = cc.Layer.extend({
         rtn += '敵を倒した数 × ' + this.storage.totalKilledEnemyCnt + ' ';
         rtn += '味方を生産した数 × ' + this.storage.totalProductCnt + ' ';
         rtn += 'エナジー数 × ' + this.storage.totalCoinAmount + '';
-
+*/
         this.infoText = cc.LabelTTF.create(rtn,"Arial",15);
         this.infoText.setAnchorPoint(0,0);
         this.infoText.setPosition(this.infoTextPosX,this.infoTextPosY);
