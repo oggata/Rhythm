@@ -15,15 +15,15 @@ var GameLayer = cc.Layer.extend({
     init:function () {
         this._super();
 
+        this.gameCnt = 0;
+
         if ('touches' in sys.capabilities || sys.platform == "browser")
                 this.setTouchEnabled(true);
         else if ('mouse' in sys.capabilities)
                 this.setMouseEnabled(true);
 
         this.isGameFinished = false;
-
         this.comboCnt = 0;
-
         this.tapCnt = 0;
         this.taps = [];
 
@@ -32,6 +32,18 @@ var GameLayer = cc.Layer.extend({
         this.back.setPosition(0,0);
         this.addChild(this.back);
 
+
+
+
+
+
+/*
+            this.tap = new Tap(this,200,100,220,120);
+            this.addChild(this.tap);
+            this.taps.push(this.tap);
+*/
+
+/*
         this.chara001 = new DisplayPlayer(chara001,10,260);
         this.addChild(this.chara001);
 
@@ -55,11 +67,96 @@ var GameLayer = cc.Layer.extend({
         this.touchBar.setPosition(0,80 - 25);
         this.touchBar.setAnchorPoint(0,0.5);
         this.addChild(this.touchBar);
-
+*/
         this.scheduleUpdate();
         this.setTouchEnabled(true);
 
         playBGM();
+
+
+        this.stages = [
+
+            [3,80,100,"top"],
+            [5,160,100,"top"],
+            [7,240,100,"top"],
+
+            [10,80, 400,"bottom"],
+            [11,160,400,"bottom"],
+            [12,240,400,"bottom"],
+
+            [15,50, 150,"topright"],
+            [16,100,100,"topright"],
+            [17,150,50,"topright"],
+
+            [19,180,400,"bottomleft"],
+            [20,230,380,"bottomleft"],
+            [21,280,360,"bottomleft"],
+
+            [23,50,50,"topright"],
+            [24,250,430,"bottomleft"],
+            [25,150,50,"top"],
+
+            [28.0,25+50*0,400,"bottom"],
+            [28.1,25+50*1,400,"bottom"],
+            [28.2,25+50*2,400,"bottom"],
+            [28.3,25+50*3,400,"bottom"],
+            [28.4,25+50*4,400,"bottom"],
+            [28.5,25+50*5,400,"bottom"],
+            [28.6,25+50*5,350,"bottom"],
+            [28.7,25+50*4,350,"bottom"],
+            [28.8,25+50*3,350,"bottom"],
+            [28.9,25+50*2,350,"bottom"],
+            [29.0,25+50*1,350,"bottom"],
+            [29.1,25+50*0,350,"bottom"],
+
+            [31,180+50,260,"left"],
+            [32,180+50,260-50,"topleft"],
+            [33,180,260-50,"top"],
+            [34,180-50,260-50,"topright"],
+            [35,180-50,260,"right"],
+            [36,180-50,260+50,"bottomright"],
+            [37,180,260+50,"bottom"],
+            [38,180+50,260+50,"bottomleft"],
+            [39,180+50,260,"left"],
+
+            [41.0,180+50,260,"left"],
+            [41.1,180+50,260-50,"topleft"],
+            [41.2,180,260-50,"top"],
+            [41.3,180-50,260-50,"topright"],
+            [41.4,180-50,260,"right"],
+            [41.5,180-50,260+50,"bottomright"],
+            [41.6,180,260+50,"bottom"],
+            [41.7,180+50,260+50,"bottomleft"],
+            [41.8,180+50,260,"left"],
+
+            [42,50, 100,"top"],
+            [43,130,100,"top"],
+            [44,210,100,"top"],
+            [45,290,100,"top"],
+
+            [46  , 50-10, 100,"top"],
+            [46.5,130-10, 100,"top"],
+            [47  ,210-10, 100,"top"],
+            [48  ,290-10, 100,"top"],
+            [48.5, 50-10, 100,"top"],
+            [49  ,130-10, 100,"top"],
+            [50  ,210-10, 100,"top"],
+            [51  ,290-10, 100,"top"],
+
+            [53,50-10 ,420,"bottom"],
+            [54,290-10,420,"bottom"],
+            [55,210-10,420,"bottom"],
+            [56,50-10 , 420,"bottom"],
+            [57,130-10,420,"bottom"],
+            [58,210-10,420,"bottom"],
+            [59,290-10,420,"bottom"],
+
+
+
+
+        ];
+
+
         return true;
     },
 
@@ -67,6 +164,50 @@ var GameLayer = cc.Layer.extend({
 
         if(this.isGameFinished == true) return;
 
+        this.gameCnt++;
+
+        for(var i=0;i<this.stages.length;i++){
+            var time = this.stages[i][0];
+            if(this.gameCnt == time * 30){
+                this.tap = new Tap(
+                    this,
+                    this.stages[i][1],
+                    this.stages[i][2],
+                    this.stages[i][3]
+                );
+                this.addChild(this.tap);
+                this.taps.push(this.tap);       
+            }
+        }
+
+
+/*
+        if(this.gameCnt == 10){
+            this.tap = new Tap(this,100,100,"topright");
+            this.addChild(this.tap);
+            this.taps.push(this.tap);
+        }
+        if(this.gameCnt == 15){
+            this.tap = new Tap(this,150,80,"topright");
+            this.addChild(this.tap);
+            this.taps.push(this.tap);
+        }
+        if(this.gameCnt == 20){
+            this.tap = new Tap(this,200,60,"topright");
+            this.addChild(this.tap);
+            this.taps.push(this.tap);
+        }
+
+*/
+
+        for(var i=0;i<this.taps.length;i++){
+            if(this.taps[i].update() == false){
+                this.removeChild(this.taps[i]);
+                this.taps.splice(i,1);
+            }            
+        }
+
+/*
         this.storage.successRate = 
         Math.floor((this.storage.good + this.storage.normal + this.storage.bad) / (this.storage.good + this.storage.normal + this.storage.bad + this.storage.miss) * 100)
 
@@ -124,26 +265,38 @@ var GameLayer = cc.Layer.extend({
                 this.taps.splice(i,1);
             }            
         }
+*/
     },
 
 //デバイス入力----->
     onTouchesBegan:function (touches, event) {
         if(this.isToucheable() == false) return;
         this.touched = touches[0].getLocation();
-        if(this.touched.y >= 200) return;
         for(var i=0;i<this.taps.length;i++){
-            var x = this.taps[i].getPosition().x;
-            var y = this.taps[i].getPosition().y;
+            var x = this.taps[i].target.getPosition().x;
+            var y = this.taps[i].target.getPosition().y;
+            cc.log("aaax:" + x + "y:" + y);
             if( this.touched.x -20 <= x && x <= this.touched.x + 20 &&
                 this.touched.y -20 <= y && y <= this.touched.y + 20){
+                cc.log("x:" + x + "y:" + y);
                 this.taps[i].tap();
-playSE();
             }
         }
     },
 
     onTouchesMoved:function (touches, event) {
+        if(this.isToucheable() == false) return;
         this.touched = touches[0].getLocation();
+        for(var i=0;i<this.taps.length;i++){
+            var x = this.taps[i].target.getPosition().x;
+            var y = this.taps[i].target.getPosition().y;
+            cc.log("aaax:" + x + "y:" + y);
+            if( this.touched.x -20 <= x && x <= this.touched.x + 20 &&
+                this.touched.y -20 <= y && y <= this.touched.y + 20){
+                cc.log("x:" + x + "y:" + y);
+                this.taps[i].tap();
+            }
+        }
     },
 
     onTouchesEnded:function (touches, event) {

@@ -17,6 +17,7 @@ var s_tap        = "ui/tap.png";
 var s_tap_good   = "ui/tap_good.png";
 var s_tap_normal = "ui/tap_normal.png";
 var s_tap_bad    = "ui/tap_bad.png";
+var s_tap_target = "ui/tap_target.png";
 
 //json
 var charactor_json       = base_dir + "json/charactor.json";
@@ -90,5 +91,6 @@ var g_resources       = [
     s_tap_good,
     s_tap_normal,
     s_tap_bad,
-    s_se_good
+    s_se_good,
+    s_tap_target
 ];

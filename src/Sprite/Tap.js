@@ -8,7 +8,7 @@
 
 var Tap = cc.Node.extend({
 
-    ctor:function (game,depX,depY) {
+    ctor:function (game,touchX,touchY,depDis) {
         this._super();
         this.game              = game;
         this.storage           = this.game.storage;
@@ -16,11 +16,50 @@ var Tap = cc.Node.extend({
         this.dy                = 0;
         this.scale             = 1;
         this.alpha             = 1;
-        this.depX              = depX;
-        this.depY              = depY;
-        this.isTapped          = false;
-        this.initializeAnimation();
+        this.touchX            = touchX;
+        this.touchY            = touchY;
 
+
+this.depDis = depDis;
+if(this.depDis == "left"){
+    this.depX = touchX - 300;
+    this.depY = touchY;
+}
+if(this.depDis == "right"){
+    this.depX = touchX + 300;
+    this.depY = touchY;
+}
+if(this.depDis == "top"){
+    this.depX = touchX;
+    this.depY = touchY + 300;
+}
+if(this.depDis == "bottom"){
+    this.depX = touchX;
+    this.depY = touchY - 300;
+}
+if(this.depDis == "topleft"){
+    this.depX = touchX - 300;
+    this.depY = touchY + 300;
+}
+if(this.depDis == "topright"){
+    this.depX = touchX + 300;
+    this.depY = touchY + 300;
+}
+if(this.depDis == "bottomleft"){
+    this.depX = touchX - 300;
+    this.depY = touchY - 300;
+}
+if(this.depDis == "bottomright"){
+    this.depX = touchX + 300;
+    this.depY = touchY - 300;
+}
+
+
+        this.isTapped          = false;
+        this.markerPosX        = this.depX - this.touchX;
+        this.markerPosY        = this.depY - this.touchY;
+        this.randingCnt        = 0;
+        this.initializeAnimation();
         this.status = "none";
     },
     
@@ -28,83 +67,129 @@ var Tap = cc.Node.extend({
     },
 
     update:function() {
+        this.speed = 10;
+        if(this.depX < this.touchX){
+            this.depX += this.speed;
+        }
+        if(this.depX > this.touchX){
+            this.depX -= this.speed;
+        }
+        if(this.depY < this.touchY){
+            this.depY += this.speed;
+        }
+        if(this.depY > this.touchY){
+            this.depY -= this.speed;
+        }
+        this.sprite.setPosition(this.depX,this.depY);
+        this.good.setPosition(this.depX,this.depY);
+        this.normal.setPosition(this.depX,this.depY);
+        this.bad.setPosition(this.depX,this.depY);
+
+        if((this.depX == this.touchX) && (this.depY == this.touchY)){
+            this.randingCnt++;
+            if(this.status == "none" || this.status == "miss"){
+                if(this.randingCnt>=10){
+                    this.status = "miss";
+                    this.bad.setVisible(true);
+                    //return false;
+                }
+                if(this.randingCnt>=10){
+                    this.alpha -= 0.05;
+                    this.sprite.setOpacity(255 * this.alpha);
+                    this.target.setOpacity(255 * this.alpha);
+                }
+                if(this.randingCnt>=20){
+                    return false;
+                }
+            }else{
+                if(this.randingCnt>=10){
+                    return false;
+                }
+            }
+        }
+
         if(this.isTapped == true){
-            this.scale += 0.05;
-            this.alpha -= 0.05;
+            this.scale += 0.15;
+            this.alpha -= 0.02;
             if(this.alpha < 0) this.alpha = 0;
             this.sprite.setScale(this.scale);
             this.sprite.setOpacity(255 * this.alpha);
         }
-        this.setPosition(this.getPosition().x,this.getPosition().y - 5);
-        if(this.getPosition().y < -100){
-            //this.game.chara001.damage(10);
-            if(this.status == "none"){
-                this.game.chara002.energy += 10;
-                this.game.comboCnt = 0;
-                this.game.storage.miss++;
-            }
-            if(this.status == "bad"){
-                this.game.chara002.energy += 5;
-            }
-            return false;
-        }
+
         return true;
     },
 
     tap:function(){
+        if(this.isTapped==true) return;
+        if(this.status == "miss") return;
+
+        var distance = getDistance(
+            this.target.getPosition().x,
+            this.target.getPosition().y,
+            this.sprite.getPosition().x,
+            this.sprite.getPosition().y
+        );
+        if(50 < distance) return;
+
+        playSE();
         this.isTapped = true;
-        
         this.status = "bad";
-        if(80 - 20 <= this.getPosition().y && this.getPosition().y <= 80 + 20){
+
+        if(this.randingCnt <= 4){
             this.status = "normal";
         }
-        if(80 - 10 <= this.getPosition().y && this.getPosition().y <= 80 + 10){
+        if(this.randingCnt <= 2){
             this.status = "good";
         }
 
         if(this.status == "bad"){
             this.bad.setVisible(true);
-            this.game.chara001.energy += 5;
             this.game.comboCnt = 0;
             this.game.storage.bad++;
         }
         if(this.status == "normal"){
             this.normal.setVisible(true);
-            this.game.chara001.energy += 10;
             this.game.comboCnt = 0;
             this.game.storage.normal++;
         }
         if(this.status == "good"){
             this.good.setVisible(true);
-            this.game.chara001.energy += 20;
             this.game.comboCnt++;
             this.game.storage.good++;
         }
-
-        //this.sprite.img = s_tap2;
-        //this.sprite.setTexture(s_tap2);
     },
 
     initializeAnimation:function(){
-        
+        this.setPosition(0,0);
+
+        this.target = cc.Sprite.create(s_tap_target);
+        this.target.setPosition(this.touchX,this.touchY);
+        this.addChild(this.target);
+
+/*
+        this.tap = cc.Node.create();
+        this.tap.setPosition(this.depX,this.depY);
+*/
+
         this.sprite = cc.Sprite.create(s_tap);
         this.addChild(this.sprite);
-        this.setPosition(this.depX,this.depY);
+        this.sprite.setPosition(this.depX,this.depY);
         
         this.good = cc.Sprite.create(s_tap_good);
         this.addChild(this.good);
-        this.good.setPosition(0,0);
+        this.good.setPosition(this.depX,this.depY);
         this.good.setVisible(false);
 
         this.normal = cc.Sprite.create(s_tap_normal);
         this.addChild(this.normal);
-        this.normal.setPosition(0,0);
+        this.normal.setPosition(this.depX,this.depY);
         this.normal.setVisible(false);
 
         this.bad = cc.Sprite.create(s_tap_bad);
         this.addChild(this.bad);
-        this.bad.setPosition(0,0);
+        this.bad.setPosition(this.depX,this.depY);
         this.bad.setVisible(false);
+
         //デバッグ
         /*
         if(CONFIG.DEBUG_FLAG==1){
