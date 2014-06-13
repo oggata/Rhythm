@@ -37,25 +37,45 @@ var GameLayer = cc.Layer.extend({
         this.back.setPosition(0,0);
         this.addChild(this.back);
 
-        this.score = cc.LabelTTF.create("00","Arial",20);
-        this.score.setPosition(40,450);
+        this.hitGauge = new Gauge(300,5,'blue');
+        this.hitGauge.setPosition(10,10);
+        this.addChild(this.hitGauge);
+
+        this.player = new DisplayPlayer(chara001,0,380);
+        this.addChild(this.player);
+
+        this.enemy = new DisplayPlayer(chara002,10,160);
+        this.addChild(this.enemy);
+
+        this.bullet = new Bullet();
+        this.bullet.set_position(320/2,480/2);
+        this.addChild(this.bullet);
+
+/*
+        this.timeGauge = new Gauge(300,4,'blue');
+        this.timeGauge.setPosition(10,10);
+        this.addChild(this.timeGauge);
+*/
+        this.score = cc.LabelTTF.create("100.00%","Arial",17);
+        this.score.setPosition(10,15);
+        this.score.setAnchorPoint(0,0);
         this.addChild(this.score);
 
-        this.combo = cc.LabelTTF.create("00","Arial",40);
-        this.combo.setPosition(250,450);
+        this.combo = cc.LabelTTF.create("00","Arial",50);
+        this.combo.setFontFillColor(cc.c4b(30,144,255,255));
+        this.combo.setAnchorPoint(0.5,0.5);
+        this.combo.setPosition(320/2,280);
         this.addChild(this.combo);
 
         this.combo2 = cc.LabelTTF.create("COMBO","Arial",15);
-        this.combo2.setPosition(250,420);
+        this.combo2.setFontFillColor(cc.c4b(30,144,255,255));
+        this.combo2.setPosition(320/2,280 - 30);
         this.addChild(this.combo2);
 
         this.cutIn = new CutIn();
         this.cutIn.setPosition(0,200);
         this.addChild(this.cutIn,999);
         this.cutIn.set_text("START");
-
-        this.enemy = new DisplayPlayer(chara002,10,160);
-        this.addChild(this.enemy);
 
         this.scheduleUpdate();
         this.setTouchEnabled(true);
@@ -107,14 +127,17 @@ var GameLayer = cc.Layer.extend({
         //スコアの計測
         this.storage.successRate = Math.floor((this.storage.good + this.storage.normal)/(this.storage.good + this.storage.normal + this.storage.bad + this.storage.miss)* 100);
         if(this.storage.good + this.storage.normal == 0){
-            this.score.setString("");
+            this.score.setString("hit:0%");
+            this.hitGauge.update(1);
         }else{
-            this.score.setString(this.storage.successRate.toFixed(2) + "%");
+            this.score.setString("hit:" + this.storage.successRate.toFixed(2) + "%");
+            this.hitGauge.update(this.storage.successRate.toFixed(2) / 100);
         }
 
         if(this.comboCnt >= 1){
             this.combo.setVisible(true);
             this.combo2.setVisible(true);
+            this.bullet.set_visible(true);
             this.combo.setString(this.comboCnt);
             if(this.comboCnt >= this.storage.maxCombo){
                 this.storage.maxCombo = this.comboCnt;
@@ -122,6 +145,7 @@ var GameLayer = cc.Layer.extend({
         }else{
             this.combo.setVisible(false);
             this.combo2.setVisible(false);
+            this.bullet.set_visible(false);
         }
     },
 
@@ -223,7 +247,6 @@ var GameLayer = cc.Layer.extend({
     },
 
     onTouchesEnded:function (touches, event) {
-
     },
 
     onTouchesCancelled:function (touches, event) {

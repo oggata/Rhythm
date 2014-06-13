@@ -44,8 +44,8 @@ var s_twitter_button     = base_dir + "button/twitter.png";
 var s_twitter_button_on  = base_dir + "button/twitterOn.png";
 
 //effect
-var effect_fire          = base_dir + "effect/pipo-btleffect036_60.png";
-var effect_water         = base_dir + "effect/pipo-btleffect038.png";
+var effect_fire          = base_dir + "effect/pipo-btleffect021.png";
+
 
 //sprite
 var s_initSprite         = base_dir + "sprite/initSprite.png";

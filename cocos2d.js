@@ -52,6 +52,7 @@
             'src/Sprite/GameUI.js',
             'src/Sprite/DisplayPlayer.js',
             'src/Sprite/Button.js',
+            'src/Sprite/Bullet.js',
             'src/Util/HttpClient.js',
             'src/Util/Calc.js',
             'src/Util/Storage.js',
